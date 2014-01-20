@@ -58,6 +58,12 @@ class Plugin_Name {
 	protected static $instance = null;
 
 	/**
+	 * Instance of class to register CPT and taxonomies
+	 * @var Plugin_Name_CPT
+	 */
+	public $cpt;
+
+	/**
 	 * Initialize the plugin by setting localization and loading public scripts
 	 * and styles.
 	 *
@@ -75,6 +81,13 @@ class Plugin_Name {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
+	/**
+	 * @TODO - Uncomment requried features 
+	 *
+	 * Various functionality is separated into external files
+	 */
+		// include_once( 'includes/cpt.php' );
+		// $this->cpt = new Plugin_Name_CPT( $this );
 	}
 
 	/**
