@@ -33,7 +33,7 @@ class Plugin_Name {
 	const VERSION = '1.0.0';
 
 	/**
-	 * @TODO - Rename "plugin-name" to the name your your plugin
+	 * @TODO - Rename "plugin-name" to the name of your plugin
 	 *
 	 * Unique identifier for your plugin.
 	 *
@@ -141,9 +141,9 @@ class Plugin_Name {
 
 					switch_to_blog( $blog_id );
 					self::single_activate();
-				}
 
-				restore_current_blog();
+					restore_current_blog();
+				}
 
 			} else {
 				self::single_activate();
@@ -179,9 +179,9 @@ class Plugin_Name {
 					switch_to_blog( $blog_id );
 					self::single_deactivate();
 
-				}
+					restore_current_blog();
 
-				restore_current_blog();
+				}
 
 			} else {
 				self::single_deactivate();
