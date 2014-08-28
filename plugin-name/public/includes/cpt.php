@@ -87,10 +87,10 @@ class Plugin_Name_CPT {
 	// 		'query_var'         => true,
 	// 		'rewrite'           => true,
 	// 		'query_var'         => true,
-	// 		'capabilities'      => '',
+	// 		'capabilities'      => array(),
 	// 	);
 
-	// 	register_taxonomy( 'Singular Name', array( 'post' ), $args );
+	// 	register_taxonomy( 'Singular Name', array( $this->post_type ), $args );
 	// }
 
 	function get_image ( $id, $size = 'projects-thumbnail' ) {
