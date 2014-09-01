@@ -242,6 +242,7 @@ class Plugin_Name {
 	 */
 	private static function single_activate() {
 		// @TODO: Define activation functionality here
+		flush_rewrite_rules();
 	}
 
 	/**
