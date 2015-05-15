@@ -31,6 +31,7 @@ class Plugin_Name {
 	 * @var     string
 	 */
 	const VERSION = '1.0.0';
+	const PREFIX = 'Plugin_Name';
 
 	/**
 	 * @TODO - Rename "plugin-name" to the name of your plugin
@@ -47,6 +48,7 @@ class Plugin_Name {
 	 * @var      string
 	 */
 	protected $plugin_slug = 'plugin-name';
+	protected $plugin_name = 'plugin-name';
 
 	/**
 	 * Instance of this class.
@@ -99,6 +101,17 @@ class Plugin_Name {
 	 */
 	public function get_plugin_slug() {
 		return $this->plugin_slug;
+	}
+
+	/**
+	 * Return the plugin name.
+	 *
+	 * @since    1.0.0
+	 *
+	 * @return    Plugin slug variable.
+	 */
+	public function get_plugin_name() {
+		return $this->plugin_name;
 	}
 
 	/**
@@ -285,6 +298,93 @@ class Plugin_Name {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_slug . '-plugin-script', plugins_url( 'assets/js/public.js', __FILE__ ), array( 'jquery' ), self::VERSION );
+	}
+
+	public static function locate_template( $template_name, $template_path = '', $default_path = '' ) {
+		if ( ! $template_path ) {
+			$template_path = self::template_path();
+		}
+
+		if ( ! $default_path ) {
+			$default_path = self::get_plugin_dir() . '/public/views/templates/';
+		}
+
+			// Look within passed path within the theme - this is priority
+		$template = locate_template(
+			array(
+				trailingslashit( $template_path ) . $template_name,
+				$template_name
+				)
+			);
+
+			// Get default template
+		if ( ! $template ) {
+			$template = $default_path . $template_name;
+		}
+			// Return what we found
+		return apply_filters( self::PREFIX.'_locate_template', $template, $template_name, $template_path );
+	}
+
+	public static function get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
+		if ( $args && is_array( $args ) ) {
+			extract( $args );
+		}
+
+		$located = self::locate_template( $template_name, $template_path, $default_path );
+
+		if ( ! file_exists( $located ) ) {
+			_doing_it_wrong( __FUNCTION__, sprintf( '<code>%s</code> does not exist.', $located ), '2.1' );
+			return;
+		}
+
+			// Allow 3rd party plugin filter template file from their plugin
+		$located = apply_filters( self::PREFIX.'get_template', $located, $template_name, $args, $template_path, $default_path );
+
+		do_action( self::PREFIX.'_before_template_part', $template_name, $template_path, $located, $args );
+
+		include( $located );
+
+		do_action( self::PREFIX.'_after_template_part', $template_name, $template_path, $located, $args );
+	}
+
+	public static function get_template_part( $slug, $name = '' ) {
+		$template = '';
+
+			// Look in yourtheme/slug-name.php and yourtheme/drawattention/slug-name.php
+		if ( $name ) {
+			$template = locate_template( array( "{$slug}-{$name}.php", self::template_path() . "{$slug}-{$name}.php" ) );
+		}
+
+			// Get default slug-name.php
+		if ( ! $template && $name && file_exists( self::get_plugin_dir() . "/templates/{$slug}-{$name}.php" ) ) {
+			$template = self::get_plugin_dir() . "/templates/{$slug}-{$name}.php";
+		}
+
+			// If template file doesn't exist, look in yourtheme/slug.php and yourtheme/drawattention/slug.php
+		if ( ! $template ) {
+			$template = locate_template( array( "{$slug}.php", self::template_path() . "{$slug}.php" ) );
+		}
+
+			// Allow 3rd party plugin filter template file from their plugin
+		if ( $template ) {
+			$template = apply_filters( self::PREFIX.'_get_template_part', $template, $slug, $name );
+		}
+
+		if ( $template ) {
+			load_template( $template, false );
+		}
+	}
+
+	public static function template_path() {
+		return 'plugin-name/';
+	}
+
+	public static function get_plugin_dir() {
+		return dirname( dirname( __FILE__ ) );
+	}
+
+	public static function get_plugin_url() {
+		return dirname( plugin_dir_url( __FILE__ ) );
 	}
 
 }
