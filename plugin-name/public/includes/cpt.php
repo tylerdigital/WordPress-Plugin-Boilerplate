@@ -36,7 +36,7 @@ class Plugin_Name_CPT {
 				'description' => __( 'Stores '.$this->post_type.'s in the database' ), /* CPT_SINGULAR_NAME Description */
 				'public' => true,
 				'publicly_queryable' => true,
-				'exclude_from_search' => true,
+				'exclude_from_search' => false,
 				'show_ui' => true,
 				'query_var' => true,
 				'menu_position' => 8, /* this is what order you want it to appear in on the left hand side menu */
